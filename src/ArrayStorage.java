@@ -5,14 +5,17 @@ import java.util.Objects;
  */
 public class ArrayStorage {
     private Resume[] storage = new Resume[10000];
+    private int size = size();
 
     void clear() {
-        storage = null;
-        storage = new Resume[10000];
+        for (int i = 0; i < size; i++) {
+            storage[i] = null;
+        }
     }
 
     void save(Resume r) {
-        storage[size()] = r;
+        storage[size] = r;
+        size++;
     }
 
     Resume get(String uuid) {
@@ -27,24 +30,24 @@ public class ArrayStorage {
     }
 
     void delete(String uuid) {
-        for (int i = 0; i < size() - 1; i++) {
+        for (int i = 0; i < size - 1; i++) {
             if (storage[i].uuid.equals(uuid)) {
                 storage[i] = null;
+                size--;
                 break;
             }
         }
-        Resume[] newRes = getAll();
-        clear();
-        System.arraycopy(newRes, 0, storage, 0, newRes.length);
+        storage = getAll();
+        //System.arraycopy(getAll(), 0, storage, 0, size);
     }
 
     /**
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        Resume[] allRes = new Resume[size()];
+        Resume[] allRes = new Resume[size];
         int count = 0;
-        for (int i = 0; i < storage.length - 1; i++) {
+        for (int i = 0; i < storage.length; i++) {
             if (!Objects.isNull(storage[i])) {
                 allRes[count] = storage[i];
                 count++;
