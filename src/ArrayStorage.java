@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -11,6 +12,7 @@ public class ArrayStorage {
         for (int i = 0; i < size; i++) {
             storage[i] = null;
         }
+        size = 0;
     }
 
     void save(Resume r) {
@@ -20,25 +22,24 @@ public class ArrayStorage {
 
     Resume get(String uuid) {
         Resume resume = null;
-        for (Resume r: storage) {
-            if (!Objects.isNull(r) && r.uuid.equals(uuid)) {
-                resume = r;
-                break;
-            }
+        for (int i = 0; i < size; i++) {
+            if (storage[i].uuid.equals(uuid))
+                resume = storage[i];
+            break;
         }
         return resume;
     }
 
     void delete(String uuid) {
-        for (int i = 0; i < size - 1; i++) {
+        int index = 0;
+        for (int i = 0; i < size; i++) {
             if (storage[i].uuid.equals(uuid)) {
-                storage[i] = null;
                 size--;
+                index = i;
                 break;
             }
         }
-        storage = getAll();
-        //System.arraycopy(getAll(), 0, storage, 0, size);
+        System.arraycopy(storage, index + 1, storage, index, size + 1);
     }
 
     /**
@@ -58,9 +59,10 @@ public class ArrayStorage {
 
     int size() {
         int count = 0;
-        for (Resume resume : storage) {
-            if (!Objects.isNull(resume))
-                count++;
+        for (int i = 0; i < storage.length; i++) {
+            if (Objects.isNull(storage[i]))
+                break;
+            count++;
         }
         return count;
     }
