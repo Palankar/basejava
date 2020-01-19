@@ -17,43 +17,40 @@ public class ArrayStorage {
     }
 
     public void update(Resume resume) {
-        if (resume != null && !(isContained(resume.getUuid()) == -1)) {
-            storage[isContained(resume.getUuid())] = resume;
-        } else  {
+        int contained = getContained(resume.getUuid());
+        if (contained != -1) {
+            storage[contained] = resume;
+        } else {
             System.out.println("Resume is missing from storage");
         }
     }
 
-    public void save(Resume r) {
-        if (isContained(r.getUuid()) == -1 && size != 10_000) {
-            storage[size] = r;
-            size++;
-        } else if (size == 10_000) {
+    public void save(Resume resume) {
+        if (getContained(resume.getUuid()) != -1) {
+            System.out.println("Resume " + resume.getUuid() + " is already in storage");
+        } else if (size == storage.length) {
             System.out.println("Resume storage is full");
         } else {
-            System.out.println("Resume " + r.getUuid() + " is already in storage");
+            storage[size] = resume;
+            size++;
         }
     }
 
     public Resume get(String uuid) {
-        Resume resume = null;
-        if (!(isContained(uuid) == -1)) {
-            resume = storage[isContained(uuid)];
+        int contained = getContained(uuid);
+        if (contained != -1) {
+            return storage[contained];
         } else {
             System.out.println("Resume " + uuid + " is missing from storage");
         }
-        return resume;
+        return null;
     }
 
     public void delete(String uuid) {
-        if (!(isContained(uuid) == -1)) {
-            for (int i = 0; i < size; i++) {
-                if (storage[i].getUuid().equals(uuid)) {
-                    size--;
-                    System.arraycopy(storage, i + 1, storage, i, size);
-                    break;
-                }
-            }
+        int contained = getContained(uuid);
+        if (contained != -1) {
+            size--;
+            System.arraycopy(storage, contained + 1, storage, contained, size);
         } else {
             System.out.println("Resume " + uuid + " is missing from storage");
         }
@@ -72,14 +69,12 @@ public class ArrayStorage {
         return size;
     }
 
-    private int isContained(String uuid) {
-        int contains = -1;
+    private int getContained(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
-                contains = i;
-                break;
+                return i;
             }
         }
-        return contains;
+        return -1;
     }
 }
